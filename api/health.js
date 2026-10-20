@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   };
   const url = new URL(req.url, 'http://x');
   if (url.searchParams.get('ping') !== '1') return send(res, 200, out);
-  const secret = process.env.HEALTH_SECRET || '';
+  const secret = String(process.env.HEALTH_SECRET || '').trim();
   if (!(secret && url.searchParams.get('secret') === secret)) {
     try {
       const u = await requireUser(req);

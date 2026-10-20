@@ -1,20 +1,22 @@
 // Gemeinsame Helfer für die Server-Funktionen (Vercel, Node 18+).
 // Alle geheimen Schlüssel kommen aus Umgebungsvariablen und verlassen nie den Server.
 
+// Werte säubern: Leerzeichen/Zeilenumbrüche vom Kopieren entfernen, URL ohne /rest/v1 o. ä.
+const clean = (v) => String(v || '').trim().replace(/^["']|["']$/g, '');
 export const ENV = {
-  SUPABASE_URL: (process.env.SUPABASE_URL || '').replace(/\/+$/, ''),
-  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || '',
-  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  TWELVEDATA_API_KEY: process.env.TWELVEDATA_API_KEY || '',
-  FMP_API_KEY: process.env.FMP_API_KEY || '',
-  PARALLEL_API_KEY: process.env.PARALLEL_API_KEY || '',
-  ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+  SUPABASE_URL: clean(process.env.SUPABASE_URL).replace(/\/+$/, '').replace(/\/(rest|auth|storage|realtime)\/v1$/i, '').replace(/\/+$/, ''),
+  SUPABASE_ANON_KEY: clean(process.env.SUPABASE_ANON_KEY),
+  SUPABASE_SERVICE_ROLE_KEY: clean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+  TWELVEDATA_API_KEY: clean(process.env.TWELVEDATA_API_KEY),
+  FMP_API_KEY: clean(process.env.FMP_API_KEY),
+  PARALLEL_API_KEY: clean(process.env.PARALLEL_API_KEY),
+  ANTHROPIC_API_KEY: clean(process.env.ANTHROPIC_API_KEY),
   MODEL_QUICK: process.env.MODEL_QUICK || 'claude-haiku-5-5',
   MODEL_DEFAULT: process.env.MODEL_DEFAULT || 'claude-sonnet-5-5',
   MODEL_COMPLEX: process.env.MODEL_COMPLEX || process.env.MODEL_DEFAULT || 'claude-sonnet-5-5',
   AI_DAILY_LIMIT: Math.max(0, parseInt(process.env.AI_DAILY_LIMIT || '60', 10) || 0),
   AI_MAX_TOKENS: Math.max(256, parseInt(process.env.AI_MAX_TOKENS || '4000', 10) || 4000),
-  OWNER_EMAIL: (process.env.OWNER_EMAIL || '').toLowerCase(),
+  OWNER_EMAIL: clean(process.env.OWNER_EMAIL).toLowerCase(),
 };
 
 export function send(res, status, obj) {
