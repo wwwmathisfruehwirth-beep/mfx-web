@@ -1,0 +1,11 @@
+{
+  "name": "mfx-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "MFX Makro-Zentrale als Webseite für Freunde (Prototyp)",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "dev": "node dev/server.mjs"
+  }
+}
