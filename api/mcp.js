@@ -85,8 +85,11 @@ async function parallel(tool, inp) {
   if (!ENV.PARALLEL_API_KEY) throw Object.assign(new Error('Parallel Search ist nicht eingerichtet'), { code: 'server_not_connected', status: 200 });
   const body = { objective: str(inp.objective, 4900) || undefined, search_queries: (Array.isArray(inp.search_queries) ? inp.search_queries : []).slice(0, 5).map(q => str(q, 190)).filter(Boolean) };
   if (!body.search_queries.length) body.search_queries = [str(inp.objective, 190) || 'news'];
-  const r = await fetch(PAR, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': ENV.PARALLEL_API_KEY }, body: JSON.stringify(body) });
-  const j = await r.json().catch(() => null);
+  const go = (bd) => fetch(PAR, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': ENV.PARALLEL_API_KEY }, body: JSON.stringify(bd), signal: AbortSignal.timeout(25_000) });
+  let r = await go({ ...body, mode: ENV.PARALLEL_MODE });
+  let j = await r.json().catch(() => null);
+  // Falls die API den Modus einmal nicht annimmt: ohne Modus noch einmal versuchen
+  if ((r.status === 400 || r.status === 422) && /mode/i.test(JSON.stringify(j || ''))) { r = await go(body); j = await r.json().catch(() => null); }
   if (!r.ok || !j) throw Object.assign(new Error('Parallel Search ' + r.status + ': ' + String(j && (j.error && j.error.message || j.message) || '').slice(0, 160)), { code: r.status === 429 ? 'rate_limited' : 'tool_error', status: 200 });
   return { search_id: j.search_id || '', results: (j.results || []).map(x => ({ url: x.url, title: x.title || '', publish_date: x.publish_date || null, excerpts: Array.isArray(x.excerpts) ? x.excerpts : [] })) };
 }
@@ -105,7 +108,7 @@ function ttl(server, tool, inp) {
     if (/earnings-calendar/.test(e)) return 3 * 36e5;
     return 6 * 36e5;
   }
-  return 10 * 60_000;
+  return 15 * 60_000; // Parallel-Suche: 15 Minuten für alle gemeinsam
 }
 
 export default async function handler(req, res) {
@@ -115,7 +118,8 @@ export default async function handler(req, res) {
     const b = await readBody(req);
     const server = String(b.server || ''), tool = String(b.tool || ''), inp = (b.input && typeof b.input === 'object') ? b.input : {};
     if (!['Twelve Data', 'FMP', 'Parallel Search'].includes(server)) return send(res, 200, { ok: false, code: 'server_not_connected', message: 'Unbekannte Datenquelle' });
-    const key = 'mcp|' + server + '|' + tool + '|' + JSON.stringify(Object.keys(inp).sort().reduce((o, k) => (o[k] = inp[k], o), {}));
+    // session_id gehört nicht in den Schlüssel, sonst teilen sich Freunde keine Suchergebnisse
+    const key = 'mcp|' + server + '|' + tool + '|' + JSON.stringify(Object.keys(inp).filter(k => k !== 'session_id').sort().reduce((o, k) => (o[k] = inp[k], o), {}));
     const T = ttl(server, tool, inp);
     const hit = await cacheGet(key, b.refresh ? Math.min(T, 30_000) : T);
     if (hit) return send(res, 200, { ok: true, payload: hit.body, storedAt: hit.at, cached: true });

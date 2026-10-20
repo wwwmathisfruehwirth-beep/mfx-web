@@ -12,6 +12,8 @@ export const ENV = {
   TWELVEDATA_API_KEY: clean(process.env.TWELVEDATA_API_KEY),
   FMP_API_KEY: clean(process.env.FMP_API_KEY),
   PARALLEL_API_KEY: clean(process.env.PARALLEL_API_KEY),
+  // Such-Modus von Parallel: fast kostet 1 $ je 1000 Suchen, basic/advanced 5 $ (Standard der API wäre advanced)
+  PARALLEL_MODE: ['turbo', 'fast', 'basic', 'advanced'].includes(clean(process.env.PARALLEL_MODE).toLowerCase()) ? clean(process.env.PARALLEL_MODE).toLowerCase() : 'fast',
   ANTHROPIC_API_KEY: clean(process.env.ANTHROPIC_API_KEY),
   MODEL_QUICK: process.env.MODEL_QUICK || 'claude-haiku-5-5',
   MODEL_DEFAULT: process.env.MODEL_DEFAULT || 'claude-sonnet-5-5',

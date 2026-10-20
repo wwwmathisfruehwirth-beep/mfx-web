@@ -59,6 +59,7 @@ Die Schlüssel kopierst du dir in eine Notiz. Sie sind geheim, also nie öffentl
 | `ANTHROPIC_API_KEY` | dein Anthropic-Schlüssel |
 | `OWNER_EMAIL` | deine E-Mail-Adresse |
 | `HEALTH_SECRET` | ein langes Zufallswort für die Prüfseite |
+| `PARALLEL_MODE` | optional, Standard `fast` (1 $ je 1000 Suchen). `basic` liefert längere Auszüge, kostet aber 5 $ je 1000 |
 | `AI_DAILY_LIMIT` | optional, Standard 60 KI-Anfragen pro Person und Tag (eine Guide-Frage zählt oft 2–3) |
 
 3. **Deploy** drücken. Danach bekommst du eine Adresse wie `https://mfx-web-xyz.vercel.app`.
@@ -83,6 +84,7 @@ Hinweis: Der eingebaute E-Mail-Versand von Supabase schafft nur wenige Mails pro
 ## Was du wissen solltest
 
 - **Kontingente werden geteilt.** Alle Freunde nutzen deine Schlüssel. Twelve Data (kostenlos) erlaubt 8 Abrufe pro Minute, FMP (kostenlos) etwa 250 pro Tag. Der Zwischenspeicher hilft, aber bei vielen gleichzeitigen Nutzern kommt manchmal „gerade zu viele Abrufe“. Dann hilft ein kleiner bezahlter Tarif.
+- **News-Kosten:** Parallel schenkt jedem Konto mit hinterlegter Karte 5 $ Guthaben pro Monat. Im Modus `fast` reicht das für etwa 5.000 Suchen. Gleiche Suchen teilen sich alle Freunde 15 Minuten lang.
 - **KI-Kosten:** Jede Person hat ein Tageslimit (`AI_DAILY_LIMIT`). Den Verbrauch siehst du in der Anthropic-Konsole, oder in Supabase im SQL Editor mit der Abfrage am Ende von `schema.sql`.
 - **Die Wochenanalyse steckt in der Seite.** Wenn die Makroanalyse aktualisiert wird, ersetzt du `public/index.html` auf GitHub durch die neue Datei. Vercel veröffentlicht dann automatisch neu.
 - **Die Seite selbst ist erreichbar, die Daten nicht.** Wer die Adresse kennt, sieht die Anmeldemaske und könnte den Quelltext mit der statischen Wochenanalyse lesen. Kurse, KI, Suche und alle Journale gibt es nur nach dem Login.
