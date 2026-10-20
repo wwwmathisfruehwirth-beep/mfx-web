@@ -2025,7 +2025,7 @@ table.rt tr.sum{border-top:1px solid var(--line)}
 </div>
 <div id="wl-list"></div>
 <footer>
-<p>Quellen: Kurse live von Twelve Data. Tageskerzen mit Volumen, Kursziele, Einstufungen, Gewinnschätzungen sowie Quartals- und Dividendentermine von FMP. News über eine Websuche (Parallel Search), die Claude auf Deutsch zusammenfasst und nach Wichtigkeit sortiert. Markt-Termine aus dem Kalender-Reiter. Was eine Quelle nicht liefert, steht als „nicht verfügbar“.</p>
+<p>Quellen: Kurse live von Twelve Data. Tageskerzen mit Volumen, Kursziele, Einstufungen, Gewinnschätzungen sowie Quartals- und Dividendentermine von FMP. News über eine Nachrichtensuche. Ist die KI eingerichtet, fasst sie die Meldungen auf Deutsch zusammen und sortiert sie nach Wichtigkeit. Markt-Termine aus dem Kalender-Reiter. Was eine Quelle nicht liefert, steht als „nicht verfügbar“.</p>
 <p>Die Liste, gespeicherte Werte und die „Neu“-Markierungen bleiben nur in diesem Browser. Kursziele und Schätzungen sind Meinungen von Analysten, keine Prognose und keine Anlageberatung. Termine bitte beim Unternehmen gegenprüfen.</p>
 </footer>
 </div>
@@ -4334,14 +4334,14 @@ function hMeta(t){var h=[],u=nextErAny(t);
 function nItem(x){var rr={pos:"eher positiv",neg:"eher negativ",neu:"neutral"}[x.r]||"neutral";
  return '<li class="nw-i'+(x.w==="hoch"?" hi":"")+'"><i class="nw-r '+esc(x.r||"neu")+'" aria-hidden="true"></i><div>'+(isNew(x)?'<em class="nw-new">Neu</em> ':'')+(x.u?'<a href="'+esc(x.u)+'" target="_blank" rel="noopener">'+esc(x.t)+'</a>':'<b>'+esc(x.t)+'</b>')+'<span class="vh"> ('+rr+')</span><small>'+[x.k,x.q,x.z].filter(Boolean).map(esc).join(" · ")+'</small>'+(x.x?'<span class="nw-x">'+esc(x.x)+'</span>':'')+'</div></li>'}
 function hNews(t,full){var c=NWC[t],tmp=NTMP[t],st=NST[t],e=NWE[t],v=tmp||c,h="";
- h+='<div class="nw-src"><span>'+(v?(v.ai?"Kurzfassung von Claude aus der Websuche":"Treffer der Websuche")+(c&&c.at&&!tmp?" · Stand "+hm(c.at):""):"Websuche über Parallel Search")+'</span><button type="button" class="lvbtn" data-lva="news" data-t="'+esc(t)+'"'+(st?' disabled':'')+'>'+(st?(st==="search"?"Sucht …":"Fasst zusammen …"):"Neu suchen")+'</button></div>';
+ h+='<div class="nw-src"><span>'+(v?(v.ai?"Kurzfassung von Claude aus der Websuche":"Treffer der Websuche")+(c&&c.at&&!tmp?" · Stand "+hm(c.at):""):"Nachrichtensuche")+'</span><button type="button" class="lvbtn" data-lva="news" data-t="'+esc(t)+'"'+(st?' disabled':'')+'>'+(st?(st==="search"?"Sucht …":"Fasst zusammen …"):"Neu suchen")+'</button></div>';
  if(v){if(v.lage)h+='<p class="nw-lage">'+esc(v.lage)+'</p>';
   if(v.items&&v.items.length)h+='<ul class="nw">'+v.items.slice(0,full?8:5).map(nItem).join("")+'</ul>';
   else if(!st)h+='<p class="wl-note">In den Suchtreffern war keine neue Meldung zu '+esc(stockName(t))+'.</p>'}
  else if(st)h+='<p class="wl-note">'+(st==="search"?"Suche die neuesten Meldungen …":"Fasse die Treffer zusammen …")+'</p>';
  if(e&&!st)h+='<p class="wl-note">'+cErr(e,"Parallel Search")+'</p>';
  if(!v&&!st&&!e)h+='<p class="wl-note">'+(NOMCP?cErr({code:"no_mcp"},"Parallel Search"):"News werden gleich geladen …")+'</p>';
- if(v&&!v.ai&&SMPOFF&&!st)h+='<p class="wl-note">Die Kurzfassung durch Claude ist für diese Seite nicht erlaubt. Du siehst die rohen Suchtreffer.</p>';
+ if(v&&!v.ai&&SMPOFF&&!st)h+='<p class="wl-note">Die KI-Kurzfassung ist auf dieser Seite noch nicht eingerichtet. Du siehst die neuesten Schlagzeilen aus der Nachrichtensuche.</p>';
  else if(v&&!v.ai&&NAIERR&&!st)h+='<p class="wl-note">Die Kurzfassung hat diesmal nicht geklappt. Du siehst die rohen Suchtreffer. „Neu suchen“ versucht es noch einmal.</p>';
  var nm=stockName(t);
  h+='<div class="wl-links"><a href="https://news.google.com/search?q='+encodeURIComponent(nm+" Aktie")+'&hl=de" target="_blank" rel="noopener">Google News</a><a href="https://finance.yahoo.com/quote/'+encodeURIComponent(t)+'/news" target="_blank" rel="noopener">Yahoo Finance</a><a href="https://www.investing.com/search/?q='+encodeURIComponent(t)+'" target="_blank" rel="noopener">Investing.com</a></div>';
@@ -4471,7 +4471,7 @@ function srcHtml(){var h=[],qs=WL.map(lv),qat=0,qerr=null,qld=false;qs.forEach(f
  var fat=0,fer=null,fl=0;WL.forEach(function(t){var L=lv(t);Object.keys(L.fat).forEach(function(k){if(L.fat[k]>fat)fat=L.fat[k]});Object.keys(L.fe).forEach(function(k){if(!L.f[k]&&L.fe[k].code!=="empty"&&L.fe[k].code!=="nosym")fer=L.fe[k]});fl+=Object.keys(L.ld).length});
  h.push(srcChip("Analysten, Termine, Kerzen: FMP",fl?"ld":fat?"ok":fer?"er":"ld",fl?fl+" offen":fat?hm(fat):fer?(fer.code==="limit"?"Tageslimit":fer.code==="plan"?"Tarif":"Fehler"):"wartet"));
  var nat=0,nld=Object.keys(NST).length,ner=null;WL.forEach(function(t){var c=NWC[t];if(c&&c.at>nat)nat=c.at;if(NWE[t])ner=NWE[t]});
- h.push(srcChip("News: Parallel Search",nld?"ld":nat?"ok":ner?"er":"ld",nld?"sucht":nat?hm(nat):ner?"Fehler":"wartet"));
+ h.push(srcChip("News",nld?"ld":nat?"ok":ner?"er":"ld",nld?"sucht":nat?hm(nat):ner?"Fehler":"wartet"));
  h.push(srcChip("Kurzfassung: Claude",SMPOFF?"er":"ok",SMPOFF?"nicht erlaubt":""));
  return h.join("")}
 function paintRadar(){var box=document.getElementById("wl-radar"),st=document.getElementById("st-wl");if(!box&&!st)return;
@@ -4678,7 +4678,7 @@ skOpen=function(t){
  var box=skG("sk-det");box.hidden=false;
  box.innerHTML='<div class="sk-c wide" id="sk-head"></div><p class="wl-note" id="sk-prog"></p><div class="chips sk-jump" aria-label="Springe zu"><button type="button" data-j="sk-nw">News</button><button type="button" data-j="sk-mr">Markt</button><button type="button" data-j="sk-cal">Termine</button><button type="button" data-j="sk-chart">Chart</button><button type="button" data-j="sk-an">Analysten</button><button type="button" data-j="sk-val">Bewertung</button><button type="button" data-j="sk-fin">Quartalszahlen</button><button type="button" data-j="sk-div">Dividende</button><button type="button" data-j="sk-co">Firma</button></div>'
   +'<div class="sk-grid"><div class="sk-c wide" id="sk-kpi"></div><div class="sk-c wide" id="sk-chart"></div><div class="sk-c" id="sk-nw"></div><div class="sk-c" id="sk-mr"></div><div class="sk-c" id="sk-cal"></div><div class="sk-c" id="sk-an"></div><div class="sk-c" id="sk-rs" hidden></div><div class="sk-c" id="sk-val"></div><div class="sk-c" id="sk-fin"></div><div class="sk-c" id="sk-own" hidden></div><div class="sk-c" id="sk-div"></div><div class="sk-c wide" id="sk-co"></div></div>'
-  +'<p class="wl-note">Daten: Kurs live von Twelve Data · Analysten, Termine, Tageskerzen und Firmendaten von FMP · News über Parallel Search, von Claude zusammengefasst'+(D[t]?' · eigene Recherche (Stand 16.10.2026)':'')+'. Lerninhalt, keine Anlageberatung. Was fehlt, steht als „nicht verfügbar“.</p>';
+  +'<p class="wl-note">Daten: Kurs live von Twelve Data · Analysten, Termine, Tageskerzen und Firmendaten von FMP · News aus der Nachrichtensuche'+(D[t]?' · eigene Recherche (Stand 16.10.2026)':'')+'. Lerninhalt, keine Anlageberatung. Was fehlt, steht als „nicht verfügbar“.</p>';
  box.querySelectorAll("[data-j]").forEach(function(b){b.onclick=function(){var e=skG(b.dataset.j);if(e)e.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"})}});
  var L=lv(t);if(L.q)SKD[t].q={ok:1,v:L.q};if(L.f.pr)SKD[t].pr={ok:1,v:{name:L.f.pr.name,sector:L.f.pr.sec,industry:L.f.pr.ind}};if(HIST[t])SKD[t].ch={ok:1,v:1};
  skAll();
@@ -6232,7 +6232,7 @@ function errTxt(e){var c=e&&e.code;
  if(c==="rate_limited")return"Gerade zu viele Anfragen. Versuch es in ein paar Minuten noch einmal.";
  if(c==="empty")return"Die Suche hat gerade nichts Passendes gefunden.";
  return"Die Suche hat gerade nicht geklappt"+(c?" ("+esc(c)+")":"")+". Versuch es gleich noch einmal."}
-function rawNote(){if(!C.raw||!C.items.length)return"";return '<p class="mr-note">'+(C.why==="not_granted"?"Claude darf auf dieser Seite gerade nicht einordnen. ":"Claude konnte die Treffer gerade nicht einordnen. ")+'Du siehst die Schlagzeilen der Suche ohne Einordnung.</p>'}
+function rawNote(){if(!C.raw||!C.items.length)return"";return '<p class="mr-note">'+(C.why==="no_sample"||C.why==="not_granted"?"Die KI-Einordnung ist auf dieser Seite noch nicht eingerichtet. ":"Die KI konnte die Treffer gerade nicht einordnen. ")+'Du siehst die Schlagzeilen der Suche ohne Einordnung.</p>'}
 function mine(){var T=ticks();return C.items.filter(function(x){return x.a.some(function(a){return T.indexOf(a.t)>-1})})}
 function forT(t){t=String(t||"").toUpperCase();return C.items.filter(function(x){return x.a.some(function(a){return a.t===t})})}
 function head(tt){return '<div class="mr-h"><div><b class="mr-tt">'+(tt||"Markt-Radar")+'</b><span class="mr-st">'+status()+'</span></div><button type="button" class="mr-btn" data-mr="load"'+(RUN.busy?' disabled':'')+'>'+(RUN.busy?"Sucht …":"Neu suchen")+'</button></div>'}
@@ -6256,7 +6256,7 @@ function pPage(){var el=$("mr-page");if(!el)return;
   '<div class="mr-box mr-pg">'+head("Was gerade zählt")+lageH()+rawNote()+(RUN.err&&C.items.length?'<p class="mr-note">'+errTxt(RUN.err)+' Du siehst den letzten Stand.</p>':'')+
   (C.items.length?'<div class="mr-f" role="group" aria-label="Filter">'+FL.map(function(f){var n=f[0]==="all"?C.items.length:f[0]==="mine"?mine().length:null;return '<button type="button" data-mf="'+f[0]+'" aria-pressed="'+(FIL===f[0])+'">'+f[1]+(n!=null?' <span>'+n+'</span>':'')+'</button>'}).join("")+'</div>':'')+
   (C.items.length?(L.length?'<div class="mr-l">'+L.map(function(x){return item(x)}).join("")+'</div>':'<p class="mr-note">Für diesen Filter gibt es gerade kein Thema.</p>'):empty())+'</div>'+
-  '<details class="mr-help"><summary>Wie funktioniert der Radar?</summary><p>Beim Öffnen des Tools sucht der Radar automatisch, wenn der letzte Stand älter als 90 Minuten ist (nachts und am Wochenende 4 Stunden). Er stellt vier Suchanfragen über Parallel Search: Banken und Analysten, Hedgefonds und Geldflüsse, die Marktbewegung und die Themen deiner Watchlist. Claude liest die Treffer, fasst gleiche Meldungen zusammen und schätzt ein, welche deiner Aktien betroffen sind und in welche Richtung (↓ eher belastend, ↑ eher stützend, ↕ gemischt).</p><p>Die Einordnung ist eine Einschätzung von Claude und keine Anlageberatung. Öffne vor einer Entscheidung die Quelle. Die KI-Einordnung hat ein Tageslimit pro Person.</p></details>'}
+  '<details class="mr-help"><summary>Wie funktioniert der Radar?</summary><p>Beim Öffnen des Tools sucht der Radar automatisch, wenn der letzte Stand älter als 90 Minuten ist (nachts und am Wochenende 4 Stunden). Er stellt vier Suchanfragen an die Nachrichtensuche: Banken und Analysten, Hedgefonds und Geldflüsse, die Marktbewegung und die Themen deiner Watchlist. Claude liest die Treffer, fasst gleiche Meldungen zusammen und schätzt ein, welche deiner Aktien betroffen sind und in welche Richtung (↓ eher belastend, ↑ eher stützend, ↕ gemischt).</p><p>Die Einordnung ist eine Einschätzung von Claude und keine Anlageberatung. Öffne vor einer Entscheidung die Quelle. Die KI-Einordnung hat ein Tageslimit pro Person.</p></details>'}
 function pStock(){var el=$("sk-mr");if(!el)return;var t="";try{t=window.SKS&&window.SKS.t}catch(e){}if(!t){el.innerHTML="";return}
  var L=forT(t),G=C.items.filter(function(x){return L.indexOf(x)<0&&x.m&&x.s==="hoch"}).slice(0,2);
  var h='<h3>Markt & Branche</h3>';

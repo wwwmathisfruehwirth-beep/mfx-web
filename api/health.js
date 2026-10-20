@@ -1,4 +1,5 @@
-import { ENV, send, requireUser } from './_lib/util.js';
+import { ENV, send, requireUser, cacheGet, cachePut } from './_lib/util.js';
+import { freeNews } from './_lib/news.js';
 
 // Prüfseite: /api/health zeigt, welche Schlüssel gesetzt sind (ohne sie zu verraten).
 // /api/health?ping=1&secret=HEALTH_SECRET (oder angemeldet als OWNER_EMAIL) testet jede Quelle mit einem echten, kleinen Abruf.
@@ -9,6 +10,7 @@ export default async function handler(req, res) {
     twelveData: !!ENV.TWELVEDATA_API_KEY,
     fmp: !!ENV.FMP_API_KEY,
     parallel: !!ENV.PARALLEL_API_KEY,
+    news: ENV.PARALLEL_API_KEY ? 'Parallel Search' : 'Bing News (kostenlos)',
     anthropic: !!ENV.ANTHROPIC_API_KEY,
     models: { quick: ENV.MODEL_QUICK, default: ENV.MODEL_DEFAULT },
     aiDailyLimit: ENV.AI_DAILY_LIMIT,
@@ -16,6 +18,14 @@ export default async function handler(req, res) {
     build: { commit: String(process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7), env: process.env.VERCEL_ENV || '' },
   };
   const url = new URL(req.url, 'http://x');
+  // /api/health?news=1 prüft die kostenlose Nachrichtensuche (Ergebnis 15 Minuten zwischengespeichert)
+  if (url.searchParams.get('news') === '1') {
+    try {
+      let hit = await cacheGet('health|news', 15 * 60_000);
+      if (!hit) { const r = await freeNews(['Nasdaq stocks', 'Tech-Aktien heute']); hit = await cachePut('health|news', { n: r.results.length, newest: (r.results[0] || {}).publish_date || null, sample: (r.results[0] || {}).title || '' }); }
+      out.newsTest = { ok: hit.body.n > 0, ...hit.body };
+    } catch (e) { out.newsTest = { ok: false, message: String(e && e.message || e).slice(0, 160) }; }
+  }
   if (url.searchParams.get('ping') !== '1') return send(res, 200, out);
   const secret = String(process.env.HEALTH_SECRET || '').trim();
   if (!(secret && url.searchParams.get('secret') === secret)) {

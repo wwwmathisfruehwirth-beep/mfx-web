@@ -55,7 +55,7 @@ Die Schlüssel kopierst du dir in eine Notiz. Sie sind geheim, also nie öffentl
 | `SUPABASE_SERVICE_ROLE_KEY` | aus Schritt 2 |
 | `TWELVEDATA_API_KEY` | dein Twelve-Data-Schlüssel |
 | `FMP_API_KEY` | dein FMP-Schlüssel |
-| `PARALLEL_API_KEY` | dein Parallel-Schlüssel |
+| `PARALLEL_API_KEY` | optional: dein Parallel-Schlüssel. Ohne ihn holt die Seite die News kostenlos aus Bing News |
 | `ANTHROPIC_API_KEY` | dein Anthropic-Schlüssel |
 | `OWNER_EMAIL` | deine E-Mail-Adresse |
 | `HEALTH_SECRET` | ein langes Zufallswort für die Prüfseite |
@@ -84,6 +84,7 @@ Hinweis: Der eingebaute E-Mail-Versand von Supabase schafft nur wenige Mails pro
 ## Was du wissen solltest
 
 - **Kontingente werden geteilt.** Alle Freunde nutzen deine Schlüssel. Twelve Data (kostenlos) erlaubt 8 Abrufe pro Minute, FMP (kostenlos) etwa 250 pro Tag. Der Zwischenspeicher hilft, aber bei vielen gleichzeitigen Nutzern kommt manchmal „gerade zu viele Abrufe“. Dann hilft ein kleiner bezahlter Tarif.
+- **News ohne Schlüssel:** Solange kein Parallel-Schlüssel gesetzt ist, kommen News und Markt-Radar kostenlos aus dem Bing-News-Feed (Schlagzeile, Quelle, kurzer Auszug). `https://DEINE-ADRESSE/api/health?news=1` prüft, ob das klappt. Mit Parallel werden die Treffer genauer, mit der KI zusätzlich auf Deutsch zusammengefasst.
 - **News-Kosten:** Parallel schenkt jedem Konto mit hinterlegter Karte 5 $ Guthaben pro Monat. Im Modus `fast` reicht das für etwa 5.000 Suchen. Gleiche Suchen teilen sich alle Freunde 15 Minuten lang.
 - **KI-Kosten:** Jede Person hat ein Tageslimit (`AI_DAILY_LIMIT`). Den Verbrauch siehst du in der Anthropic-Konsole, oder in Supabase im SQL Editor mit der Abfrage am Ende von `schema.sql`.
 - **Die Wochenanalyse steckt in der Seite.** Wenn die Makroanalyse aktualisiert wird, ersetzt du `public/index.html` auf GitHub durch die neue Datei. Vercel veröffentlicht dann automatisch neu.

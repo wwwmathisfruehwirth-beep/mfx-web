@@ -35,6 +35,20 @@ R = [
     ('FMP ist in claude.ai nicht verbunden (Einstellungen → Konnektoren)', 'FMP ist auf dem Server nicht eingerichtet'),
     ('FMP bitte in claude.ai unter Einstellungen → Konnektoren neu verbinden.', 'FMP-Schlüssel auf dem Server prüfen.'),
     ('Twelve Data ist nicht verbunden (claude.ai, Einstellungen → Konnektoren).', 'Twelve Data ist auf dem Server nicht eingerichtet.'),
+    ('Die Kurzfassung durch Claude ist für diese Seite nicht erlaubt. Du siehst die rohen Suchtreffer.',
+     'Die KI-Kurzfassung ist auf dieser Seite noch nicht eingerichtet. Du siehst die neuesten Schlagzeilen aus der Nachrichtensuche.'),
+    ('(C.why==="not_granted"?"Claude darf auf dieser Seite gerade nicht einordnen. ":"Claude konnte die Treffer gerade nicht einordnen. ")',
+     '(C.why==="no_sample"||C.why==="not_granted"?"Die KI-Einordnung ist auf dieser Seite noch nicht eingerichtet. ":"Die KI konnte die Treffer gerade nicht einordnen. ")'),
+    ('"Websuche über Parallel Search"',
+     '"Nachrichtensuche"'),
+    ('srcChip("News: Parallel Search"',
+     'srcChip("News"'),
+    ('News über Parallel Search, von Claude zusammengefasst',
+     'News aus der Nachrichtensuche'),
+    ('News über eine Websuche (Parallel Search), die Claude auf Deutsch zusammenfasst und nach Wichtigkeit sortiert.',
+     'News über eine Nachrichtensuche. Ist die KI eingerichtet, fasst sie die Meldungen auf Deutsch zusammen und sortiert sie nach Wichtigkeit.'),
+    ('Er stellt vier Suchanfragen über Parallel Search:',
+     'Er stellt vier Suchanfragen an die Nachrichtensuche:'),
 ]
 miss = []
 for a, b in R:

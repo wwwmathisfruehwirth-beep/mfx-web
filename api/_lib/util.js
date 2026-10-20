@@ -3,8 +3,8 @@
 
 // Werte säubern: Leerzeichen/Zeilenumbrüche vom Kopieren entfernen, URL ohne /rest/v1 o. ä.
 const clean = (v) => String(v || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim().replace(/^["']|["']$/g, '').trim();
-// Von der Supabase-Adresse zählt nur der Anfang (https://xyz.supabase.co), alles dahinter wird abgeschnitten
-const origin = (v) => { const s = clean(v); if (!s) return ''; try { return new URL(s).origin; } catch { return s.replace(/\/+$/, '').replace(/\/(rest|auth|storage|realtime)\/v1.*$/i, ''); } };
+// Von der Supabase-Adresse zählt nur der Anfang (https://xyz.supabase.co), Zusätze wie /rest/v1 werden abgeschnitten
+const origin = (v) => clean(v).replace(/\/+$/, '').replace(/\/(rest|auth|storage|realtime|functions|graphql)\/v1(\/.*)?$/i, '').replace(/\/+$/, '');
 export const ENV = {
   SUPABASE_URL: origin(process.env.SUPABASE_URL),
   SUPABASE_ANON_KEY: clean(process.env.SUPABASE_ANON_KEY),

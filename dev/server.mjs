@@ -13,7 +13,7 @@ const BASE = 'http://localhost:' + PORT;
 if (FAKE) {
   Object.assign(process.env, {
     SUPABASE_URL: BASE + '/__sb', SUPABASE_ANON_KEY: 'anon-test', SUPABASE_SERVICE_ROLE_KEY: 'service-test',
-    TWELVEDATA_API_KEY: 'td-test', FMP_API_KEY: 'fmp-test', PARALLEL_API_KEY: 'par-test', ANTHROPIC_API_KEY: 'ant-test',
+    TWELVEDATA_API_KEY: 'td-test', FMP_API_KEY: 'fmp-test', PARALLEL_API_KEY: process.env.FAKE_NO_PARALLEL ? '' : 'par-test', ANTHROPIC_API_KEY: process.env.FAKE_NO_AI ? '' : 'ant-test',
     OWNER_EMAIL: 'test@mfx.de', AI_DAILY_LIMIT: process.env.AI_DAILY_LIMIT || '40',
   });
 }
@@ -87,6 +87,15 @@ if (FAKE) globalThis.fetch = async function (input, init = {}) {
     if (ep === 'profile') return jr([{ symbol: s, companyName: s + ' Corp', sector: 'Technology', industry: 'Semiconductors', ceo: 'Jane Doe', fullTimeEmployees: '1000', exchange: 'NASDAQ', description: 'Beschreibung', website: 'https://example.com' }]);
     if (ep === 'price-target-consensus') return jr([{ symbol: s, targetHigh: 300, targetLow: 150, targetConsensus: 250, targetMedian: 245 }]);
     return jr([]);
+  }
+  if (url.hostname === 'www.bing.com' && url.pathname === '/news/search') {
+    const q = url.searchParams.get('q') || '', de = url.searchParams.get('cc') === 'DE', d = new Date(Date.now() - 3 * 36e5).toUTCString(), d2 = new Date(Date.now() - 30 * 36e5).toUTCString();
+    const it = (t, u, src, ds, dt) => '<item><title>' + t + '</title><link>http://www.bing.com/news/apiclick.aspx?ref=FexRss&amp;aid=&amp;tid=x&amp;url=' + encodeURIComponent(u) + '&amp;c=1&amp;mkt=en-us</link><description>' + ds + '</description><pubDate>' + dt + '</pubDate><News:Source>' + src + '</News:Source></item>';
+    return new Response('<?xml version="1.0" encoding="utf-8" ?><rss version="2.0" xmlns:News="https://www.bing.com/news/search?q=' + encodeURIComponent(q) + '&amp;format=rss"><channel><title>' + q + '</title>'
+      + (de ? it('Tech-Sorgen bleiben &#8211; Dow im Plus (' + q + ')', 'https://www.boersennews.de/nachrichten/artikel/tech-sorgen', 'BörsenNEWS.de', 'Die Sorgen um die KI-Bewertungen &amp; Rechenzentren belasten.', d)
+        : it('Hedge Funds Dumped Tech Stocks at the Fastest Pace in a Decade (' + q + ')', 'https://finance.yahoo.com/news/hedge-funds-tech-1.html', 'Yahoo Finance', 'Goldman Sachs prime book data show the biggest tech selling since 2016.', d)
+          + it('Barclays warns of data center slowdown', 'https://www.msn.com/en-us/money/barclays-dc', 'Barron&apos;s on MSN', 'Growth in new capacity could slow sharply in 2027.', d2))
+      + '</channel></rss>', { status: 200, headers: { 'Content-Type': 'application/rss+xml; charset=utf-8' } });
   }
   if (url.hostname === 'api.parallel.ai') {
     const b = JSON.parse(init.body || '{}'); const d = new Date(Date.now() - 864e5).toISOString().slice(0, 10);

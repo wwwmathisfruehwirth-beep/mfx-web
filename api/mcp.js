@@ -1,4 +1,5 @@
 import { ENV, send, readBody, requireUser, cacheGet, cachePut, fail } from './_lib/util.js';
+import { freeNews } from './_lib/news.js';
 
 // Ersetzt die Claude-Connectoren: Twelve Data, FMP und Parallel Search mit eigenen Schlüsseln.
 // Antworten haben dieselbe Form wie die Connectoren, damit die Seite unverändert bleibt.
@@ -80,11 +81,17 @@ async function fmp(tool, inp) {
   return j;
 }
 
+
 async function parallel(tool, inp) {
   if (tool !== 'web_search') throw Object.assign(new Error('Werkzeug nicht freigegeben'), { code: 'not_in_manifest', status: 200 });
-  if (!ENV.PARALLEL_API_KEY) throw Object.assign(new Error('Parallel Search ist nicht eingerichtet'), { code: 'server_not_connected', status: 200 });
   const body = { objective: str(inp.objective, 4900) || undefined, search_queries: (Array.isArray(inp.search_queries) ? inp.search_queries : []).slice(0, 5).map(q => str(q, 190)).filter(Boolean) };
   if (!body.search_queries.length) body.search_queries = [str(inp.objective, 190) || 'news'];
+  if (!ENV.PARALLEL_API_KEY) return freeNews(body.search_queries);
+  try { return await parallelSearch(body); }
+  catch (e) { if (e && e.code === 'rate_limited') throw e; try { return await freeNews(body.search_queries); } catch { throw e; } }
+}
+
+async function parallelSearch(body) {
   const go = (bd) => fetch(PAR, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-api-key': ENV.PARALLEL_API_KEY }, body: JSON.stringify(bd), signal: AbortSignal.timeout(25_000) });
   let r = await go({ ...body, mode: ENV.PARALLEL_MODE });
   let j = await r.json().catch(() => null);
