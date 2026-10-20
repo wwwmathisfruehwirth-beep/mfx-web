@@ -2,9 +2,11 @@
 // Alle geheimen Schlüssel kommen aus Umgebungsvariablen und verlassen nie den Server.
 
 // Werte säubern: Leerzeichen/Zeilenumbrüche vom Kopieren entfernen, URL ohne /rest/v1 o. ä.
-const clean = (v) => String(v || '').trim().replace(/^["']|["']$/g, '');
+const clean = (v) => String(v || '').replace(/[\u200B-\u200D\uFEFF]/g, '').trim().replace(/^["']|["']$/g, '').trim();
+// Von der Supabase-Adresse zählt nur der Anfang (https://xyz.supabase.co), alles dahinter wird abgeschnitten
+const origin = (v) => { const s = clean(v); if (!s) return ''; try { return new URL(s).origin; } catch { return s.replace(/\/+$/, '').replace(/\/(rest|auth|storage|realtime)\/v1.*$/i, ''); } };
 export const ENV = {
-  SUPABASE_URL: clean(process.env.SUPABASE_URL).replace(/\/+$/, '').replace(/\/(rest|auth|storage|realtime)\/v1$/i, '').replace(/\/+$/, ''),
+  SUPABASE_URL: origin(process.env.SUPABASE_URL),
   SUPABASE_ANON_KEY: clean(process.env.SUPABASE_ANON_KEY),
   SUPABASE_SERVICE_ROLE_KEY: clean(process.env.SUPABASE_SERVICE_ROLE_KEY),
   TWELVEDATA_API_KEY: clean(process.env.TWELVEDATA_API_KEY),

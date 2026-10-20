@@ -12,6 +12,8 @@ export default async function handler(req, res) {
     anthropic: !!ENV.ANTHROPIC_API_KEY,
     models: { quick: ENV.MODEL_QUICK, default: ENV.MODEL_DEFAULT },
     aiDailyLimit: ENV.AI_DAILY_LIMIT,
+    supabaseUrl: ENV.SUPABASE_URL,
+    build: { commit: String(process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7), env: process.env.VERCEL_ENV || '' },
   };
   const url = new URL(req.url, 'http://x');
   if (url.searchParams.get('ping') !== '1') return send(res, 200, out);
