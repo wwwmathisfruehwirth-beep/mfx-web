@@ -111,6 +111,13 @@ if (FAKE) globalThis.fetch = async function (input, init = {}) {
     if (/Markt-Redakteur/.test(first)) {
       const d = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
       content = [{ type: 'text', text: [JSON.stringify({ lage: 'Tech unter Druck: Hedgefonds verkaufen.' }), JSON.stringify({ t: 'Hedgefonds verkaufen Tech-Aktien so schnell wie seit zehn Jahren nicht', x: 'Goldman-Daten.', w: 'Große Verkäufe drücken Kurse.', k: 'geld', s: 'hoch', d, q: 'StreetInsider', u: 'https://www.streetinsider.com/hedge-funds-tech', g: 'Chipwerte', m: 'neg', a: [['NVDA', 'neg'], ['MSFT', 'neg']] }), JSON.stringify({ t: 'Barclays: Rechenzentrum-Wachstum bricht 2027 ein', x: 'Von über 100 % auf 35 %.', w: 'Weniger Aufträge für Zulieferer.', k: 'bank', s: 'hoch', d, q: 'BTCC', u: 'https://www.btcc.com/barclays-data-center', g: 'Zulieferer', m: 'neg', a: [['NVDA', 'neg']] })].join('\n') }];
+    } else if (/SPRACHMODUS/.test(first) && Array.isArray(b.tools) && b.tools.some(t => t.name === 'get_quote') && typeof last.content === 'string') {
+      // Sprachmodus: erst Live-Kurs holen, dann kurz antworten
+      content = [{ type: 'tool_use', id: 'tv1', name: 'get_quote', input: { symbol: 'NVDA' } }];
+      return jr({ id: 'mv1', model: b.model, content, stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 10 } });
+    } else if (/SPRACHMODUS/.test(first) && /tool_result/.test(txt)) {
+      const kurs = /\\?"kurs\\?":([\d.]+)/.exec(txt);
+      content = [{ type: 'text', text: 'Nvidia steht bei ' + (kurs ? kurs[1].replace('.', ',') : '?') + ' Dollar, plus 1,5 Prozent. Läuft rund, Boss.' }];
     } else if (Array.isArray(b.tools) && b.tools.length && typeof last.content === 'string') {
       content = [{ type: 'text', text: 'Ich schaue nach.' }, { type: 'tool_use', id: 'tu1', name: b.tools[0].name, input: { query: 'Bias' } }];
       return jr({ id: 'm1', model: b.model, content, stop_reason: 'tool_use', usage: { input_tokens: 100, output_tokens: 10 } });

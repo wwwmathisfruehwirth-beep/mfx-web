@@ -89,6 +89,7 @@ Hinweis: Der eingebaute E-Mail-Versand von Supabase schafft nur wenige Mails pro
 - **KI-Kosten:** Jede Person hat ein Tageslimit (`AI_DAILY_LIMIT`). Den Verbrauch siehst du in der Anthropic-Konsole, oder in Supabase im SQL Editor mit der Abfrage am Ende von `schema.sql`.
 - **Die Wochenanalyse steckt in der Seite.** Wenn die Makroanalyse aktualisiert wird, ersetzt du `public/index.html` auf GitHub durch die neue Datei. Vercel veröffentlicht dann automatisch neu.
 - **Die Seite selbst ist erreichbar, die Daten nicht.** Wer die Adresse kennt, sieht die Anmeldemaske und könnte den Quelltext mit der statischen Wochenanalyse lesen. Kurse, KI, Suche und alle Journale gibt es nur nach dem Login.
+- **Sprachmodus (MFX Voice):** Der runde Mikrofon-Knopf über dem Guide-Knopf (oder das Mikrofon im Guide) öffnet den Sprachmodus. Antippen, sprechen, die Antwort wird vorgelesen. Kurse („Wie steht Nvidia?“) und Seiten öffnen („Öffne den Kalender“) laufen ohne KI, also sofort und ohne KI-Kosten. Alles andere beantwortet die KI mit denselben Werkzeugen wie der Guide (zählt zum Tageslimit). Ohne `ANTHROPIC_API_KEY` bleibt der Befehlsmodus nutzbar. Spracherkennung und Stimme kommen vom Browser (Chrome, Edge, Safari; auf dem iPhone muss Diktieren eingeschaltet sein), es fallen dafür keine Kosten an. Firefox kann keine Spracheingabe, dort tippt man. Der Code steckt in `public/voice.js`.
 - **Abendläufe aus Claude** (automatisch gespeicherte Ergebnisse und Quartalszahlen) sind hier noch nicht angebunden. Die Seite nutzt dafür ihre eingebauten Daten.
 - **Rechtliches:** Für einen privaten Freundeskreis ist das ein Test. Bevor die Seite öffentlich wird oder Geld kostet: Impressum, Datenschutzerklärung und eine rechtliche Prüfung der Inhalte (keine Anlageberatung).
 
@@ -97,5 +98,6 @@ Hinweis: Der eingebaute E-Mail-Versand von Supabase schafft nur wenige Mails pro
 ```
 FAKE=1 node dev/server.mjs     # simuliert alle Dienste, Login: test@mfx.de / passwort123
 node dev/e2e.cjs               # Ende-zu-Ende-Test (braucht Playwright)
+node dev/e2e-voice.cjs         # Sprachmodus (zusätzlich: FAKE=1 FAKE_NO_AI=1 PORT=8788 node dev/server.mjs)
 python3 dev/build_web.py PFAD/mz.html   # baut public/index.html aus der aktuellen Makro-Zentrale
 ```

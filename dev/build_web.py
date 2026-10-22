@@ -1,6 +1,6 @@
 """Baut public/index.html aus der aktuellen Makro-Zentrale (mz.html).
 Aufruf: python3 dev/build_web.py [/pfad/zu/mz.html]
-- bindet die Web-Brücke (shim.js) als erstes Script ein
+- bindet die Web-Brücke (shim.js) als erstes Script ein, dazu den Sprachmodus (voice.js)
 - ersetzt Hinweise, die nur in Claude Sinn ergeben
 """
 import sys, os
@@ -15,8 +15,11 @@ if s.endswith('\n</body></html>'):
 assert s.startswith('<!DOCTYPE html>')
 a = '<meta charset="utf-8">'
 assert s.count(a) >= 1
-s = s.replace(a, a + '\n<script src="/shim.js"></script>', 1)
+s = s.replace(a, a + '\n<script src="/shim.js"></script>\n<script src="/voice.js" defer></script>', 1)
 R = [
+    # Handbuch des Guide: Sprachmodus ergänzen
+    ('"- Suche oben (Taste /): findet Aktien, Begriffe, Termine und Seiten.",',
+     '"- Suche oben (Taste /): findet Aktien, Begriffe, Termine und Seiten.",\n"- MFX Voice (Sprachmodus): runder Mikrofon-Knopf über dem Guide-Knopf oder Mikrofon im Guide. Antippen und sprechen, z. B. „Wie steht Nvidia?“, „Was sagt die Zentrale zu Gold?“ oder „Öffne den Kalender“. Die Antwort wird vorgelesen; im Gesprächsmodus hört er danach weiter zu. Kurse und Befehle zum Öffnen von Seiten gehen sofort und ohne KI, alles andere beantwortet die KI. Einstellungen (Regler-Symbol): Stimme, Tempo, Vorlesen, Gesprächsmodus. Spracherkennung über den Browser (Chrome, Edge, Safari); sonst kann man tippen. Der Pfeil nach unten verkleinert das Fenster, damit die Seite sichtbar bleibt.",'),
     ('Kurse, KI-Funktionen und Speicher laufen nur, wenn das Tool in Claude geöffnet ist. Wegen der Live-Daten gibt es keinen öffentlichen Link. Guide, News-Kurzfassungen und Coach nutzen die eigene Claude-Nutzung.',
      'Kurse, KI-Funktionen und Speicher laufen über dein Konto auf dieser Seite. Guide, News-Kurzfassungen und Coach nutzen die KI der Seite, mit einem Tageslimit pro Person.'),
     ('Nutzt deine Claude-Nutzung · keine Anlageberatung', 'KI kann sich irren · keine Anlageberatung'),
