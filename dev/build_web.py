@@ -50,8 +50,7 @@ R = [
      'News aus der Nachrichtensuche'),
     ('News über eine Websuche (Parallel Search), die Claude auf Deutsch zusammenfasst und nach Wichtigkeit sortiert.',
      'News über eine Nachrichtensuche. Ist die KI eingerichtet, fasst sie die Meldungen auf Deutsch zusammen und sortiert sie nach Wichtigkeit.'),
-    ('Er stellt vier Suchanfragen über Parallel Search:',
-     'Er stellt vier Suchanfragen an die Nachrichtensuche:'),
+    ('Er sucht über Parallel Search nach', 'Er sucht über die Nachrichtensuche nach'),
 ]
 miss = []
 for a, b in R:
